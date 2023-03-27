@@ -1,32 +1,47 @@
 import React from "react";
 import "./LoginPage.css";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 
 
 
 
 export default function LoginPage() {
 
+    const [country, setCountry]= useState([]);
     const [values, setValues] = useState({
         username:'',
         password:'',
         checkbox: true,
+        country:'',
+
     })
-    let myRef=React.createRef()
 
 
+    const onChange =(e) =>{
+        const target = e.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        setValues({...values,[e.target.name]: value})
 
-const onChange =(e) =>{
+    }
 
-    // if (e.target.value.trim()) {
-    //     myRef.current.removeAttribute('disabled')
-    // }
+    useEffect( () => {
+        const getCountry = async ()=>{
+            const response = await fetch("https://restcountries.com/v2/all");
+            const data = await response.json();
+            setCountry(await data);
+            console.log(data);
+        }
+        getCountry();
 
-    const target = e.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    setValues({...values,[e.target.name]: value})
+    },[]);
 
-}
+    function changeCountry(event){
+        const requiredCountry= event.target.value;
+        values.country=requiredCountry
+        console.log(requiredCountry)
+        event.preventDefault();
+    }
+
 
     function handleSubmit(e) {
 
@@ -37,18 +52,9 @@ const onChange =(e) =>{
             username: "",
             password: "",
             checkbox: false,
+
         });
         e.target.reset()
-
-
-
-
-        // const form = e.target;
-        // const formData = new FormData(form);
-        // const formJson = Object.fromEntries(formData.entries());
-        // form.reset()
-        //
-        // console.log(formJson);
 
 
     }
@@ -81,9 +87,25 @@ const onChange =(e) =>{
                         placeholder="Enter Password"
                     />
                 </label>
+                <label>
+                    <h3>Country</h3>
+                    <select
+                        value={values.country}
+                        name="country"
+                        className="country"
+                        onChange={changeCountry}>
+                        <option></option>
+                        {
+                            country.map( (land)=>(
+                                <option key={land.name} value={land.name}>{land.name}</option>
+                            ))
+                        }
+
+                    </select>
+                </label>
 
                 <div>
-                    <button ref={myRef} className="login" type="submit" disabled={!values.password || !values.username}>
+                    <button className="login" type="submit" disabled={!values.password || !values.username|| !values.country}>
                         Login
                     </button>
                 </div>
