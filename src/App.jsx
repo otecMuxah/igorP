@@ -5,8 +5,7 @@ import {
 } from "react-router-dom";
 
 import LoginPage from "./features/login/LoginPage";
-
-import LoginPage2 from "./features/login/LoginPage2";
+import RegisterPage from "./features/register/RegisterPage";
 
 
 
@@ -20,6 +19,11 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <LoginPage />,
+
+    },
+    {
+        path: "/register",
+        element: <RegisterPage />,
 
     },
 ]);
