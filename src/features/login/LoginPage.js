@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import "./LoginPage.css";
 import { useState , useEffect } from "react";
 
@@ -16,31 +17,30 @@ export default function LoginPage() {
 
     })
 
-
-    const onChange =(e) =>{
-        const target = e.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        setValues({...values,[e.target.name]: value})
-
+    const navigate = useNavigate();
+    function handleRegisterClick() {
+        navigate('/register');
     }
+
+
+const onChange =(e) =>{
+    const target = e.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    setValues({...values,[e.target.name]: value})
+
+}
 
     useEffect( () => {
         const getCountry = async ()=>{
             const response = await fetch("https://restcountries.com/v2/all");
             const data = await response.json();
-            setCountry(await data);
+            setCountry(data);
             console.log(data);
         }
         getCountry();
 
     },[]);
 
-    function changeCountry(event){
-        const requiredCountry= event.target.value;
-        values.country=requiredCountry
-        console.log(requiredCountry)
-        event.preventDefault();
-    }
 
 
     function handleSubmit(e) {
@@ -52,6 +52,7 @@ export default function LoginPage() {
             username: "",
             password: "",
             checkbox: false,
+            country:'',
 
         });
         e.target.reset()
@@ -63,7 +64,9 @@ export default function LoginPage() {
 
     return (
         <div className="container">
+
             <form className="form" method="post" onSubmit={handleSubmit}>
+                <h1>Log Into Chat</h1>
                 <label>
                     <h3>Username</h3>
                     <div>
@@ -90,23 +93,23 @@ export default function LoginPage() {
                 <label>
                     <h3>Country</h3>
                     <select
-                        value={values.country}
-                        name="country"
-                        className="country"
-                        onChange={changeCountry}>
-                        <option></option>
-                        {
-                            country.map( (land)=>(
-                                <option key={land.name} value={land.name}>{land.name}</option>
-                            ))
-                        }
+                            value={values.country}
+                            name="country"
+                            className="country"
+                            onChange={onChange}>
+                    <option></option>
+                    {
+                        country.map( (land)=>(
+                            <option key={land.name} value={land.name}>{land.name}</option>
+                        ))
+                    }
 
-                    </select>
+                </select>
                 </label>
 
                 <div>
                     <button className="login" type="submit" disabled={!values.password || !values.username|| !values.country}>
-                        Login
+                        Log In
                     </button>
                 </div>
                 <div className="checkbox">
@@ -119,6 +122,9 @@ export default function LoginPage() {
                 <div className="reset_container">
                     <button className="reset" type="reset">
                         Cansel
+                    </button>
+                    <button onClick={handleRegisterClick} className="registration" type='button'>
+                        Registration
                     </button>
                 </div>
             </form>
